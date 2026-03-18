@@ -1,0 +1,39 @@
+{
+  "items": [],
+  "transactions": [],
+  "categories": [
+    {
+      "id": "cat-elec",
+      "name": "Electronics",
+      "description": "Electronic devices and components",
+      "color": "#3d9eff",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-office",
+      "name": "Office Supplies",
+      "description": "Office materials and supplies",
+      "color": "#00d68f",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "cat-furn",
+      "name": "Furniture",
+      "description": "Desks, chairs and fixtures",
+      "color": "#f0a500",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "suppliers": [],
+  "itemHistory": [],
+  "entryLogs": [],
+  "settings": {
+    "currency": "₱",
+    "markup": 20,
+    "tax": 12,
+    "enableTax": false,
+    "showMargin": true,
+    "minStock": 5,
+    "company": "My Store"
+  }
+}
