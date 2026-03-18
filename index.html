@@ -36,6 +36,53 @@
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
 
+
+  /* ── LIGHT MODE ── */
+  body.light-mode {
+    --bg:  #f0f2f7;
+    --bg2: #ffffff;
+    --bg3: #e8ecf4;
+    --bg4: #dde2ee;
+    --border:  #cdd4e6;
+    --border2: #b4bdd4;
+    --accent:  #d4850a;
+    --accent2: #c07608;
+    --accent-dim: rgba(212,133,10,0.12);
+    --green:     #00a86b;
+    --green-dim: rgba(0,168,107,0.12);
+    --red:       #e03050;
+    --red-dim:   rgba(224,48,80,0.12);
+    --blue:      #1a7fd4;
+    --blue-dim:  rgba(26,127,212,0.12);
+    --purple:    #7c5cbf;
+    --text:  #1a2236;
+    --text2: #4a5872;
+    --text3: #8a97b4;
+    --shadow: 0 4px 24px rgba(0,0,0,0.10);
+  }
+
+  /* Smooth transition when switching modes */
+  body, .sidebar, .main, .topbar, .modal, .modal-overlay,
+  .table-card, .chart-card, .stat-card, .settings-card,
+  .nav-item, .btn, .input, .select, .textarea {
+    transition: background 0.2s ease, color 0.15s ease, border-color 0.2s ease;
+  }
+
+  /* Theme toggle button in topbar */
+  .theme-toggle-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .theme-toggle-btn:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   
   body {
@@ -649,7 +696,7 @@
   @media (max-width: 800px) {
     .sidebar { width: 60px; min-width: 60px; }
     .sidebar .logo-mark { font-size: 14px; letter-spacing: 0; }
-    .sidebar .logo-sub, .nav-item span, .nav-section, .sidebar-footer { display: none; }
+    .sidebar .logo-sub, .nav-item span, .nav-section, .nav-group-label, .nav-group-arrow, .sidebar-footer { display: none; }
     .nav-item { justify-content: center; padding: 12px; }
     .main { margin-left: 60px; }
     .settings-grid { grid-template-columns: 1fr; }
@@ -1026,6 +1073,54 @@
   .item-search-option-sub  { font-size: 11px; color: var(--text2); margin-top: 2px; }
   .item-search-option-stock { font-family: var(--mono); font-size: 12px; font-weight: 700; white-space: nowrap; }
   .item-search-no-results { padding: 16px 14px; font-size: 13px; color: var(--text3); text-align: center; }
+
+  /* ── COLLAPSIBLE NAV GROUPS ── */
+  .nav-group { overflow: hidden; }
+
+  .nav-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+  }
+  .nav-group-header:hover .nav-group-label { color: var(--text2); }
+
+  .nav-group-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: var(--mono);
+    transition: color 0.15s;
+  }
+
+  .nav-group-arrow {
+    width: 14px; height: 14px;
+    color: var(--text3);
+    transition: transform 0.22s ease, color 0.15s;
+    flex-shrink: 0;
+  }
+  .nav-group.collapsed .nav-group-arrow { transform: rotate(-90deg); }
+  .nav-group-header:hover .nav-group-arrow { color: var(--text2); }
+
+  .nav-group-items {
+    overflow: hidden;
+    max-height: 600px;
+    transition: max-height 0.28s ease, opacity 0.2s ease;
+    opacity: 1;
+  }
+  .nav-group.collapsed .nav-group-items {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  /* Indent sub-items slightly */
+  .nav-group .nav-item {
+    padding-left: 24px;
+  }
 </style>
 </head>
 <body>
@@ -1066,66 +1161,103 @@
       <div class="logo-sub">v2.0 — Inventory System</div>
     </div>
     <nav class="nav">
-      <div class="nav-section" id="nav-sec-main">Main</div>
-      <div class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>Dashboard</span>
+
+      <!-- ── Main Group ── -->
+      <div class="nav-group" id="nav-sec-main">
+        <div class="nav-group-header" onclick="toggleNavGroup('nav-sec-main')">
+          <span class="nav-group-label">Main</span>
+          <svg class="nav-group-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+          </div>
+          <div class="nav-item" id="nav-inventory" onclick="navigate('inventory')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span>Inventory</span>
+          </div>
+          <div class="nav-item" id="nav-items" onclick="navigate('items')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>All Items</span>
+          </div>
+          <div class="nav-item" id="nav-transactions" onclick="navigate('transactions')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            <span>Transactions</span>
+          </div>
+        </div>
       </div>
-      <div class="nav-item" id="nav-inventory" onclick="navigate('inventory')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span>Inventory</span>
+
+      <!-- ── Reports Group ── -->
+      <div class="nav-group" id="nav-sec-reports">
+        <div class="nav-group-header" onclick="toggleNavGroup('nav-sec-reports')">
+          <span class="nav-group-label">Reports</span>
+          <svg class="nav-group-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item" id="nav-reports" onclick="navigate('reports')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Reports</span>
+          </div>
+        </div>
       </div>
-      <div class="nav-item" id="nav-items" onclick="navigate('items')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span>All Items</span>
+
+      <!-- ── Entry Dashboards Group ── -->
+      <div class="nav-group collapsed" id="nav-sec-entry">
+        <div class="nav-group-header" onclick="toggleNavGroup('nav-sec-entry')">
+          <span class="nav-group-label">Entry Dashboards</span>
+          <svg class="nav-group-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item" id="nav-entry-new" onclick="navigate('entry-new')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <span>New Items</span>
+          </div>
+          <div class="nav-item" id="nav-entry-rent" onclick="navigate('entry-rent')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H3M16 2l5 5-5 5M8 22l-5-5 5-5"/></svg>
+            <span>For Rent</span>
+          </div>
+          <div class="nav-item" id="nav-entry-return" onclick="navigate('entry-return')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+            <span>Returns</span>
+          </div>
+          <div class="nav-item" id="nav-entry-repair" onclick="navigate('entry-repair')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <span>For Repair</span>
+          </div>
+          <div class="nav-item" id="nav-entry-disposal" onclick="navigate('entry-disposal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            <span>Disposal</span>
+          </div>
+          <div class="nav-item" id="nav-entry-sale" onclick="navigate('entry-sale')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
+            <span>For Sale</span>
+          </div>
+        </div>
       </div>
-      <div class="nav-item" id="nav-transactions" onclick="navigate('transactions')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-        <span>Transactions</span>
+
+      <!-- ── Config Group ── -->
+      <div class="nav-group collapsed" id="nav-sec-config">
+        <div class="nav-group-header" onclick="toggleNavGroup('nav-sec-config')">
+          <span class="nav-group-label">Config</span>
+          <svg class="nav-group-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="nav-group-items">
+          <div class="nav-item" id="nav-categories" onclick="navigate('categories')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+            <span>Categories</span>
+          </div>
+          <div class="nav-item" id="nav-suppliers" onclick="navigate('suppliers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Suppliers</span>
+          </div>
+          <div class="nav-item" id="nav-settings" onclick="navigate('settings')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            <span>Settings</span>
+          </div>
+        </div>
       </div>
-      <div class="nav-section" id="nav-sec-reports">Reports</div>
-      <div class="nav-item" id="nav-reports" onclick="navigate('reports')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        <span>Reports</span>
-      </div>
-      <div class="nav-section" id="nav-sec-entry">Entry Dashboards</div>
-      <div class="nav-item" id="nav-entry-new" onclick="navigate('entry-new')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        <span>New Items</span>
-      </div>
-      <div class="nav-item" id="nav-entry-rent" onclick="navigate('entry-rent')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10H3M16 2l5 5-5 5M8 22l-5-5 5-5"/></svg>
-        <span>For Rent</span>
-      </div>
-      <div class="nav-item" id="nav-entry-return" onclick="navigate('entry-return')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
-        <span>Returns</span>
-      </div>
-      <div class="nav-item" id="nav-entry-repair" onclick="navigate('entry-repair')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        <span>For Repair</span>
-      </div>
-      <div class="nav-item" id="nav-entry-disposal" onclick="navigate('entry-disposal')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        <span>Disposal</span>
-      </div>
-      <div class="nav-item" id="nav-entry-sale" onclick="navigate('entry-sale')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/></svg>
-        <span>For Sale</span>
-      </div>
-      <div class="nav-section" id="nav-sec-config">Config</div>
-      <div class="nav-item" id="nav-categories" onclick="navigate('categories')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-        <span>Categories</span>
-      </div>
-      <div class="nav-item" id="nav-suppliers" onclick="navigate('suppliers')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Suppliers</span>
-      </div>
-      <div class="nav-item" id="nav-settings" onclick="navigate('settings')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-        <span>Settings</span>
-      </div>
+
     </nav>
     <div class="sidebar-footer" id="sidebar-time">--:-- --</div>
     <div style="padding:10px 20px 16px;font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;border-top:1px solid var(--border);margin-top:2px">
@@ -1139,6 +1271,7 @@
       <div class="topbar-title">INVENTRACK / <span id="topbar-page">DASHBOARD</span></div>
       <div class="topbar-right">
         <span class="badge badge-amber" id="topbar-low-stock" style="display:none">⚠ LOW STOCK</span>
+        <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
         <div class="user-badge" id="user-badge" onclick="showUserMenu()" style="display:none"><div class="user-badge-avatar" id="user-avatar">?</div><div><div class="user-badge-name" id="user-badge-name">—</div><div class="user-badge-role" id="user-badge-role">—</div></div></div><span class="badge badge-blue" id="topbar-date"></span>
         <button class="btn btn-primary btn-sm" onclick="openAddItem()">+ Add Item</button>
       </div>
@@ -1582,6 +1715,32 @@
                 </div>
                 <hr class="divider">
                 <button class="btn btn-primary" onclick="saveSettings()" style="width:100%">Save Settings</button>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-icon" style="background:rgba(167,139,250,0.12);color:var(--purple)">🎨</div>
+                <div class="settings-card-title">Appearance</div>
+              </div>
+              <div class="settings-card-body">
+                <div class="form-group">
+                  <label class="form-label">Theme</label>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+                    <div id="theme-card-dark" onclick="setTheme('dark')" style="cursor:pointer;padding:14px 12px;border-radius:8px;border:2px solid var(--accent);background:var(--bg3);display:flex;flex-direction:column;align-items:center;gap:8px;transition:all 0.15s">
+                      <div style="font-size:22px">🌙</div>
+                      <div style="font-size:12px;font-weight:600;color:var(--text)">Dark Mode</div>
+                      <div style="font-size:10px;color:var(--text3);text-align:center">Low-light, easy on eyes</div>
+                      <div id="theme-check-dark" style="width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;font-weight:700">✓</div>
+                    </div>
+                    <div id="theme-card-light" onclick="setTheme('light')" style="cursor:pointer;padding:14px 12px;border-radius:8px;border:2px solid var(--border);background:var(--bg3);display:flex;flex-direction:column;align-items:center;gap:8px;transition:all 0.15s">
+                      <div style="font-size:22px">☀️</div>
+                      <div style="font-size:12px;font-weight:600;color:var(--text)">Light Mode</div>
+                      <div style="font-size:10px;color:var(--text3);text-align:center">Clean, bright interface</div>
+                      <div id="theme-check-light" style="width:18px;height:18px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text3);font-weight:700;opacity:0.3">✓</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -2693,6 +2852,8 @@ function navigate(page) {
     toast('Access denied — you cannot use entry dashboards.', 'error'); return;
   }
 
+  // Auto-expand the group containing this page
+  expandGroupForPage(page);
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + page).classList.add('active');
@@ -4432,6 +4593,8 @@ function renderSettings() {
   document.getElementById('ov-cats').textContent = db.categories.length;
   document.getElementById('ov-sups').textContent = db.suppliers.length;
   document.getElementById('ov-users').textContent = loadUsers().length;
+  // Reflect current theme in appearance cards
+  applyTheme(localStorage.getItem('inventrack_theme') || 'dark');
   // Always reset to General tab so panels are in a known visible state
   switchSettingsTab('general');
   applyAccessControl();
@@ -5536,13 +5699,128 @@ function renderItemTable(items) {
   }).join('');
 }
 
+
+// ════════════════════════════════════════════════════════
+//  COLLAPSIBLE NAV GROUPS
+// ════════════════════════════════════════════════════════
+
+// Map each page to its group ID
+const PAGE_GROUP_MAP = {
+  'dashboard':      'nav-sec-main',
+  'inventory':      'nav-sec-main',
+  'items':          'nav-sec-main',
+  'transactions':   'nav-sec-main',
+  'reports':        'nav-sec-reports',
+  'entry-new':      'nav-sec-entry',
+  'entry-rent':     'nav-sec-entry',
+  'entry-return':   'nav-sec-entry',
+  'entry-repair':   'nav-sec-entry',
+  'entry-disposal': 'nav-sec-entry',
+  'entry-sale':     'nav-sec-entry',
+  'categories':     'nav-sec-config',
+  'suppliers':      'nav-sec-config',
+  'settings':       'nav-sec-config',
+};
+
+function toggleNavGroup(groupId) {
+  const group = document.getElementById(groupId);
+  if (!group) return;
+  group.classList.toggle('collapsed');
+  // Persist collapse state
+  const states = getNavStates();
+  states[groupId] = group.classList.contains('collapsed');
+  localStorage.setItem('inventrack_nav_states', JSON.stringify(states));
+}
+
+function getNavStates() {
+  try { return JSON.parse(localStorage.getItem('inventrack_nav_states') || '{}'); }
+  catch { return {}; }
+}
+
+function restoreNavStates() {
+  const states = getNavStates();
+  ['nav-sec-main','nav-sec-reports','nav-sec-entry','nav-sec-config'].forEach(id => {
+    const group = document.getElementById(id);
+    if (!group) return;
+    if (states[id] === true) {
+      group.classList.add('collapsed');
+    } else if (states[id] === false) {
+      group.classList.remove('collapsed');
+    }
+    // undefined = use HTML default (main & reports open, entry & config collapsed)
+  });
+}
+
+function expandGroupForPage(page) {
+  const groupId = PAGE_GROUP_MAP[page];
+  if (!groupId) return;
+  const group = document.getElementById(groupId);
+  if (group && group.classList.contains('collapsed')) {
+    group.classList.remove('collapsed');
+    const states = getNavStates();
+    states[groupId] = false;
+    localStorage.setItem('inventrack_nav_states', JSON.stringify(states));
+  }
+}
+
+
+// ════════════════════════════════════════════════════════
+//  THEME — DARK / LIGHT MODE
+// ════════════════════════════════════════════════════════
+function applyTheme(theme) {
+  const isLight = theme === 'light';
+  document.body.classList.toggle('light-mode', isLight);
+
+  // Topbar icon
+  const btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+  if (btn) btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+
+  // Settings cards highlight
+  const darkCard  = document.getElementById('theme-card-dark');
+  const lightCard = document.getElementById('theme-card-light');
+  const darkCheck  = document.getElementById('theme-check-dark');
+  const lightCheck = document.getElementById('theme-check-light');
+
+  if (darkCard) {
+    darkCard.style.borderColor  = isLight ? 'var(--border)' : 'var(--accent)';
+    lightCard.style.borderColor = isLight ? 'var(--accent)' : 'var(--border)';
+  }
+  if (darkCheck) {
+    darkCheck.style.background  = isLight ? 'var(--border)' : 'var(--accent)';
+    darkCheck.style.color       = isLight ? 'var(--text3)'  : '#000';
+    darkCheck.style.opacity     = isLight ? '0.3' : '1';
+    lightCheck.style.background = isLight ? 'var(--accent)' : 'var(--border)';
+    lightCheck.style.color      = isLight ? '#000'          : 'var(--text3)';
+    lightCheck.style.opacity    = isLight ? '1' : '0.3';
+  }
+}
+
+function setTheme(theme) {
+  localStorage.setItem('inventrack_theme', theme);
+  applyTheme(theme);
+  toast(theme === 'light' ? '☀️ Light mode enabled' : '🌙 Dark mode enabled', 'info');
+}
+
+function toggleTheme() {
+  const current = localStorage.getItem('inventrack_theme') || 'dark';
+  setTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('inventrack_theme') || 'dark';
+  applyTheme(saved);
+}
+
 function init() {
+  loadTheme();
   initCharts();
   renderDashboard();
   updateClock();
   setInterval(updateClock, 30000);
   appPerms = loadPerms();
-  // Wire settings tabs via event delegation (avoids inline onclick parsing issues)
+  restoreNavStates();
+  // Wire settings tabs via event delegation
   const tabBar = document.getElementById('settings-tabs-bar');
   if (tabBar) {
     tabBar.addEventListener('click', function(e) {
